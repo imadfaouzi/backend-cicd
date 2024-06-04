@@ -28,7 +28,7 @@ jobs:
 
       - uses: ./.github/workflows/composite/jib
         with:
-          image_name: ${{ secrets.REGISTRY_ENDPOINT }}/${{ env.SERVICE_NAME }}:${{ env.IMAGE_TAG }} # ghcr.io/imadfa01 | backend-cicd | dev ---- fix this
+          image_name: ${{ secrets.REGISTRY_ENDPOINT }}/${{ env.SERVICE_NAME }}:${{ env.IMAGE_TAG }} # ghcr.io/imadfaouzi | backend-cicd | dev ---- fix this
           service_name: ${{ env.SERVICE_NAME }}
           registry_host: ${{ secrets.REGISTRY_HOST }}
           registry_username: ${{ github.actor }}
