@@ -1,0 +1,19 @@
+version: '3.9'
+
+networks:
+  main-network:
+    name: main-network
+    external: false
+    driver: bridge
+services:
+
+  backend-cicd:
+    image: ghcr.io/imadfaouzi/backend-cicd:dev
+    container_name: backend-cicd
+    volumes:
+      - ./storage:/storage
+    networks:
+      - main-network
+    restart: always
+    ports:
+      - "8080:8080"

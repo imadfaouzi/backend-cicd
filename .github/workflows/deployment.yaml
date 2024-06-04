@@ -1,0 +1,35 @@
+name: backen CI/CD
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  packages: write
+   
+env:
+  IMAGE_TAG: dev
+  BRANCH_NAME: main
+  SERVICE_NAME: backend-cicd
+  COMPOSE_DIR: docker-compose.yml
+  WORKDIR: ~/github_actions/backend-cicd
+
+jobs:
+
+  builder:
+    name: "Build & Push docker image"
+    runs-on: ubuntu-latest
+    steps:
+    
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - uses: ./.github/workflows/composite/jib
+        with:
+          image_name: ${{ secrets.REGISTRY_ENDPOINT }}/${{ env.SERVICE_NAME }}:${{ env.IMAGE_TAG }} # ghcr.io/imadfa01 | backend-cicd | dev
+          service_name: ${{ env.SERVICE_NAME }}
+          registry_host: ${{ secrets.REGISTRY_HOST }}
+          registry_username: ${{ github.actor }}
+          registry_password: ${{ secrets.GTHB_PAT }}

@@ -1,0 +1,51 @@
+name: "Build & Push Docker Image"
+description: "Build & Pushes a docker image for a single component"
+
+inputs:
+  image_name:
+    description: "Name of images to push"
+    required: true
+  service_name:
+    description: "Name of service to build"
+    required: true
+    
+  registry_host:
+    description: "Image registry host e.g. ghcr.io"
+    required: true
+  registry_username:
+    description: "Registry username"
+    required: true
+  registry_password:
+    description: "Registry password"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Login to Container Registry
+      uses: docker/login-action@v2
+      with:
+        registry: ${{ inputs.registry_host }}
+        username: ${{ inputs.registry_username }}
+        password: ${{ inputs.registry_password }}
+    - name: Print working directory
+      run: pwd
+      shell: bash
+  
+    - name: List files in current directory
+      run: ls -al
+      shell: bash
+    - uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '21'
+    - name: Grant execute permission for gradlew
+      shell: bash
+      run: chmod +x ./gradlew    
+
+    - name: Build & Push docker image
+      shell: bash
+      run: |
+        GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.internal.launcher.welcomeMessageEnabled=false"
+        ./gradlew clean build
+        ./gradlew jib -PghcrRegistry=${{ inputs.image_name }}
