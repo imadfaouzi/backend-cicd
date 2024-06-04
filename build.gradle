@@ -44,7 +44,7 @@ jib {
 
 	}
 	container {
-		ports = ['8080']
+		ports = ['8181']
 		mainClass = 'ma.backend_cicd.demo.DemoApplication'
 	}
 }
