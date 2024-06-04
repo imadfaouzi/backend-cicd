@@ -34,8 +34,7 @@ jobs:
           registry_username: ${{ github.actor }}
           registry_password: ${{ secrets.GTHB_PAT }}
 
-
-   deploy:
+  deploy:
       name: "Deploy To Server"
       runs-on: ubuntu-latest
       needs: [ builder ]
