@@ -53,6 +53,11 @@ runs:
   using: "composite"
   steps:
 
+
+    - name: afficher files 
+      shell: bash
+      run : ls
+      
     - name: copy file via ssh key
       uses: appleboy/scp-action@v0.1.7
       with:
