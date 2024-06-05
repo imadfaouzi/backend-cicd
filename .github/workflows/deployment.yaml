@@ -16,7 +16,7 @@ env:
   COMPOSE_DIR: docker-compose.yml
   WORKDIR: ~/github_actions/backend-cicd
 
-  REPO_SOURCE: docker-compose.yaml
+  REPO_SOURCE: docker-compose.yml
   REPO_TARGET: /home/ubuntu/github_actions/backend-cicd
 
 jobs:
