@@ -44,7 +44,7 @@ jobs:
         uses: actions/checkout@v3
       - uses: ./.github/workflows/composite/deploy
         with:
-          service_name: ${{ env.service_name }}
+          service_id: ${{ env.service_name }}
           workdir: ${{ env.WORKDIR }}
           compose_dir: ${{ env.COMPOSE_DIR }}
           repository: ${{ github.repository }}
