@@ -54,16 +54,39 @@ runs:
   steps:
 
 
+    - name: Configure SSH
+      shell: bash
+      run: |
+        mkdir -p ~/.ssh
+        chmod 700 ~/.ssh
+        echo "$SSH_KEY" > ~/.ssh/server.key
+        chmod 600 ~/.ssh/server.key
+        cat >>~/.ssh/config <<END
+        Host server
+          HostName $SSH_HOST
+          User $SSH_USER
+          IdentityFile ~/.ssh/server.key
+          StrictHostKeyChecking no
+        END
 
-    - name: copy file via ssh key
-      uses: appleboy/scp-action@v0.1.7
-      with:
-        host: ${{ inputs.ssh_host }}
-        username: ${{ inputs.ssh_user }}
-        port: 22
-        key: ${{ inputs.ssh_key }}
-        source: ${{ inputs.repo_source }}
-        target: ~/scpfolder #${{ inputs.repo_target }} 
+        # Copy the file from inputs.repo_source to ~/copyfolder
+        scp -i ~/.ssh/server.key ${inputs.repo_source} ${SSH_USER}@${SSH_HOST}:~/copyfolder
+      env:
+        SSH_KEY: ${{ inputs.ssh_key }}
+        SSH_HOST: ${{ inputs.ssh_host }}
+        SSH_USER: ${{ inputs.ssh_user }}
+
+   
+
+    # - name: copy file via ssh key
+    #   uses: appleboy/scp-action@v0.1.7
+    #   with:
+    #     host: ${{ inputs.ssh_host }}
+    #     username: ${{ inputs.ssh_user }}
+    #     port: 22
+    #     key: ${{ inputs.ssh_key }}
+    #     source: ${{ inputs.repo_source }}
+    #     target: ~/scpfolder #${{ inputs.repo_target }} 
 
     # - name: Configure SSH
     #   shell: bash
