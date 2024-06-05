@@ -54,10 +54,7 @@ runs:
   steps:
 
 
-    - name: afficher files 
-      shell: bash
-      run : ls
-      
+
     - name: copy file via ssh key
       uses: appleboy/scp-action@v0.1.7
       with:
@@ -66,36 +63,36 @@ runs:
         port: 22
         key: ${{ inputs.ssh_key }}
         source: ${{ inputs.repo_source }}
-        target: ${{ inputs.repo_target }} 
+        target: ~/scpfolder #${{ inputs.repo_target }} 
 
-    - name: Configure SSH
-      shell: bash
-      run: |
-        mkdir -p ~/.ssh
-        chmod 700 ~/.ssh
-        echo "$SSH_KEY" > ~/.ssh/server.key
-        chmod 600 ~/.ssh/server.key
-        cat >>~/.ssh/config <<END
-        Host server
-          HostName $SSH_HOST
-          User $SSH_USER
-          IdentityFile ~/.ssh/server.key
-          StrictHostKeyChecking no
-        END
-      env:
-        SSH_KEY: ${{ inputs.ssh_key }}
-        SSH_HOST: ${{ inputs.ssh_host }}
-        SSH_USER: ${{ inputs.ssh_user }}
+    # - name: Configure SSH
+    #   shell: bash
+    #   run: |
+    #     mkdir -p ~/.ssh
+    #     chmod 700 ~/.ssh
+    #     echo "$SSH_KEY" > ~/.ssh/server.key
+    #     chmod 600 ~/.ssh/server.key
+    #     cat >>~/.ssh/config <<END
+    #     Host server
+    #       HostName $SSH_HOST
+    #       User $SSH_USER
+    #       IdentityFile ~/.ssh/server.key
+    #       StrictHostKeyChecking no
+    #     END
+    #   env:
+    #     SSH_KEY: ${{ inputs.ssh_key }}
+    #     SSH_HOST: ${{ inputs.ssh_host }}
+    #     SSH_USER: ${{ inputs.ssh_user }}
 
-    - name: Deploy App
-      shell: bash
-      run: >
-        ssh server << EOF
-          echo ${{ inputs.registry_password }} | docker login ${{ inputs.registry_host }} -u ${{ inputs.registry_username }} --password-stdin
-          cd $WORKDIR
-          docker-compose -f ${{ inputs.compose_dir }} pull
-          docker-compose -f ${{ inputs.compose_dir }} up -d
-        EOF
-      env:
-        WORKDIR: ${{ inputs.workdir }}
-        REPO_PRIVATE_KEY: /tmp/${{ github.run_id }}.key
+    # - name: Deploy App
+    #   shell: bash
+    #   run: >
+    #     ssh server << EOF
+    #       echo ${{ inputs.registry_password }} | docker login ${{ inputs.registry_host }} -u ${{ inputs.registry_username }} --password-stdin
+    #       cd $WORKDIR
+    #       docker-compose -f ${{ inputs.compose_dir }} pull
+    #       docker-compose -f ${{ inputs.compose_dir }} up -d
+    #     EOF
+    #   env:
+    #     WORKDIR: ${{ inputs.workdir }}
+    #     REPO_PRIVATE_KEY: /tmp/${{ github.run_id }}.key
