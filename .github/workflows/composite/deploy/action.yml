@@ -2,7 +2,9 @@ name: "Deploy"
 description: "Deploys custom docker container"
 
 inputs:
- 
+  service_id:
+    description: "Name of service to deploy"
+    required: true
   workdir:
     description: "Workdir"
     required: true
@@ -22,10 +24,10 @@ inputs:
     description: "SSH private key"
     required: true
   ssh_host:
-    description: "SSH username"
+    description: "SSH hostname"
     required: true
   ssh_user:
-    description: "SSH password"
+    description: "SSH username"
     required: true
   registry_host:
     description: "Image registry host e.g. ghcr.io"
@@ -36,10 +38,30 @@ inputs:
   registry_password:
     description: "Registry password"
     required: true
+  port:
+    description: "port"
+    required: true
+  repo_source:
+    description: "repo_source"
+    required: true   
+  repo_target:
+    description: "repo_target"
+    required: true       
+  
 
 runs:
   using: "composite"
   steps:
+
+    - name: copy file via ssh key
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ inputs.ssh_host }}
+        username: ${{ inputs.ssh_user }}
+        port: 22
+        key: ${{ inputs.ssh_key }}
+        source: ${{ inputs.repo_source }}
+        target: ${{ inputs.repo_target }} 
 
     - name: Configure SSH
       shell: bash
@@ -65,14 +87,9 @@ runs:
       run: >
         ssh server << EOF
           echo ${{ inputs.registry_password }} | docker login ${{ inputs.registry_host }} -u ${{ inputs.registry_username }} --password-stdin
-          echo "${{ inputs.repository_key }}" > $REPO_PRIVATE_KEY
-          chmod 400 $REPO_PRIVATE_KEY
-          (test -d $WORKDIR && GIT_SSH_COMMAND='ssh -i $REPO_PRIVATE_KEY -o IdentitiesOnly=yes' git -C $WORKDIR pull --rebase) || \
-            GIT_SSH_COMMAND='ssh -i $REPO_PRIVATE_KEY -o IdentitiesOnly=yes' git clone -b ${{ inputs.branch_name }} git@github.com:${{ inputs.repository }}.git $WORKDIR
           cd $WORKDIR
           docker-compose -f ${{ inputs.compose_dir }} pull
           docker-compose -f ${{ inputs.compose_dir }} up -d
-          rm $REPO_PRIVATE_KEY
         EOF
       env:
         WORKDIR: ${{ inputs.workdir }}

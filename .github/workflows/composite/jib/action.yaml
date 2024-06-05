@@ -28,6 +28,7 @@ runs:
         registry: ${{ inputs.registry_host }}
         username: ${{ inputs.registry_username }}
         password: ${{ inputs.registry_password }}
+        
     - name: Print working directory
       run: pwd
       shell: bash

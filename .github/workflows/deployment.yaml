@@ -35,25 +35,27 @@ jobs:
           registry_password: ${{ secrets.GTHB_PAT }}
 
 
-   deploy:
-      name: "Deploy To Server"
-      runs-on: ubuntu-latest
-      needs: [ builder ]
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v3
-        - uses: ./.github/workflows/composite/deploy
-          with:
-            workdir: ${{ env.WORKDIR }}
-            compose_dir: ${{ env.COMPOSE_DIR }}
-            branch_name: ${{ env.BRANCH_NAME }}
-            repository: ${{ github.repository }}
-            registry_username: ${{ github.actor }}
+  deploy:
+    name: "Deploy To Server"
+    runs-on: ubuntu-latest
+    needs: [builder]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - uses: ./.github/workflows/composite/deploy
+        with:
+          service_name: ${{ env.service_name }}
+          workdir: ${{ env.WORKDIR }}
+          compose_dir: ${{ env.COMPOSE_DIR }}
+          repository: ${{ github.repository }}
 
-            registry_password: ${{ secrets.GTHB_PAT }}  
-            repository_key: ${{ secrets.REPOSITORY_PRIVATE_KEY }} # ! 
 
-            ssh_key: ${{ secrets.CLOUD_MYSERVER_SSH_KEY }}
-            ssh_host: ${{ secrets.CLOUD_MYSERVER_HOST }}
-            ssh_user: ${{ secrets.CLOUD_MYSERVER_USER }}
-            registry_host: ${{ secrets.REGISTRY_HOST }}  
+          ssh_key: ${{ secrets.CLOUD_MYSERVER_SSH_KEY }}
+          ssh_host: ${{ secrets.CLOUD_MYSERVER_HOST }}
+          ssh_user: ${{ secrets.CLOUD_MYSERVER_USER }}
+
+          registry_host: ${{ secrets.REGISTRY_HOST }}
+          registry_username: ${{ github.actor }}
+          registry_password: ${{ secrets.GHCR_PAT }}
+          repo_source:  ${{ env.REPO_SOURCE }}
+          repo_target:  ${{ env.REPO_TARGET }}
