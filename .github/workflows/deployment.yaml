@@ -58,4 +58,4 @@ jobs:
           registry_username: ${{ github.actor }}
           registry_password: ${{ secrets.GHCR_PAT }}
           repo_source:  ${{ env.REPO_SOURCE }}
-          repo_target:  ${{ env.REPO_TARGET }}
+          repo_target:  ${{ env.WORKDIR }}
